@@ -1,0 +1,3 @@
+[submodule "Word2World"]
+	path = Word2World
+	url = https://github.com/umair-nasir14/Word2World.git
