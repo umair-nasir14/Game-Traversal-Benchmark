@@ -10,9 +10,7 @@ import openai
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
-
-
-from word2world.utils import (
+from .utils import (
     map_to_list,
     extract_list,
     extract_dict,
@@ -22,12 +20,9 @@ from word2world.utils import (
     find_most_similar_images,
     )
 
-from word2world.agent import Word2WorldEnv, LLMAgent
+from .gym_agent import CustomEnv, LLMAgent
 
-from word2world.fixers import pad_rows_to_max_length
-
-from word2world.solvers import parse_grid, EnhancedAStarWorldAgent, WorldState
-
+from .fixers import pad_rows_to_max_length
 
 def extract_slash(model_name):
     parts = model_name.split('/')
@@ -142,7 +137,7 @@ def benchmark(model,
             print("Images Retrieved.")
             tile_images_1st_layer = overlap_dict(tile_images, tileset_used_dict_1st_layer)"""
 
-            env = Word2WorldEnv(walkable_tiles_list, "tile_images_1st_layer", "tile_images", world_map_fixed, world_map_fixed_with_chars, object_tiles_list, "#")
+            env = CustomEnv(walkable_tiles_list, "tile_images_1st_layer", "tile_images", world_map_fixed, world_map_fixed_with_chars, object_tiles_list, "#")
             
             agent = LLMAgent()
             state = env.reset()
