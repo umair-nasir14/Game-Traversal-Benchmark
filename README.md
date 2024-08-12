@@ -14,7 +14,7 @@ cd GTB
 
 To get data, simply:
 
-'''
+```
 from gtb.data import get_data
 
 
@@ -22,7 +22,7 @@ benchmark_data = get_data()
 
 for i, data in enumerate(benchmark_data[:1]):
     print(data["environment"])
-'''
+```
 
 To replicate results in the paper, create a `.env` file and add the API keys:
 
