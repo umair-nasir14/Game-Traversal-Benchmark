@@ -12,6 +12,19 @@ git clone https://github.com/umair-nasir14/Game-Traversal-Benchmark.git GTB
 cd GTB
 ```
 
+If you want to replicate experiments in the paper or you want to evaluate you LLM on the benchmark then install via `environment.yml`:
+
+```
+conda env create -f environment.yml
+conda activate gtbench
+```
+
+If you want to explore the data only:
+
+```
+pip install -r requirements.txt
+```
+
 To get data, simply:
 
 ```
