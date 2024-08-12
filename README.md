@@ -30,7 +30,6 @@ To get data, simply:
 ```
 from gtb.data import get_data
 
-
 benchmark_data = get_data()
 
 for i, data in enumerate(benchmark_data[:1]):
