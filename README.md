@@ -36,6 +36,8 @@ for i, data in enumerate(benchmark_data[:1]):
     print(data["environment"])
 ```
 
+Also, `save_data()` is provided to save your results.
+
 To replicate results in the paper, create a `.env` file and add the API keys:
 
 ```
@@ -46,7 +48,8 @@ GROQ_API_KEY= ...
 and install relevent library, such as `pip install openai`
 
 ```
-from gtb.replicate import run 
+from gtb.replicate import run
+from gtb.evaluations import compile_results
 
 model = "gpt-4-turbo-2024-04-09"
 experiment_name = "replicate_001"
