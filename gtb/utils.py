@@ -16,6 +16,10 @@ import torch
 from scipy.spatial.distance import cosine
 import traceback
 
+def extract_slash(model_name):
+    parts = model_name.split('/')
+    return parts[1] if len(parts) > 1 else ''
+
 def load_image_dict(char_tile_mapping, folder_path):
     """
     Load images based on a character-to-file mapping.
@@ -69,19 +73,6 @@ def dict_to_txt_file(dictionary, file_path):
             file.write(f'"{key}":"{value}"\n')
 
 
-#def extract_between_ticks(text: str) -> str:
-#    """
-#    Extracts text between two sets of triple backticks (```) in the given text.
-#    Raises an error if the triple backticks are not found.
-#    """
-#    # Split the text by triple backticks
-#    parts = text.split("```")
-#    
-#    # If there are at least three parts (beginning, desired text, end), return the desired text
-#    if len(parts) >= 3:
-#        return parts[1]
-#    else:
-#        raise ValueError("Triple backticks (```) not found or text between them is missing.")
 def extract_between_ticks(text):
     """
     Extracts text between the first two sets of triple backticks (```) in the given text.
@@ -524,111 +515,6 @@ def find_most_similar_images(dictionary, csv_path, no_check=False):
 
     return images, similarity_scores
 
-def find_most_similar_images_gpt(dictionary, csv_path, openai_function, model):
-    """
-    Find the most semantically similar image for each tile in the dictionary.
-
-    Parameters:
-    dictionary (Dict[str, str]): A dictionary with descriptions as keys and tiles as values.
-    csv_path (str): Path to the CSV file containing image filenames and descriptions.
-
-    Returns:
-    Tuple[Dict[str, Image.Image], Dict[str, int]]: A tuple containing two dictionaries,
-        one with the tiles and corresponding Image objects, and the other with tiles and similarity scores.
-    """
-    # Load the CSV file
-    folder = f'{csv_path}/world_tileset_data'
-    folder_char = f'{csv_path}/character_sprite_data'
-    df = pd.read_csv(f"{folder}/metadata.csv")
-    df_char = pd.read_csv(f"{folder_char}/metadata.csv")
-
-
-    # Initialize dictionaries for image objects and similarity scores
-    images = {}
-
-    # Iterate over the dictionary to find the most similar image for each tile
-    for desc, tile in dictionary.items():
-        max_similarity = 0
-        selected_image = None
-        output_cost = []
-        input_cost = []
-
-        if not desc.isalpha():
-            # Compare each description with the descriptions in the CSV
-            NO_OF_EXCEPTIONS = 0
-            done = False
-            try:
-                while not done:    
-                    similarity_discriptions = openai_function(model="gpt-4-0613", messages=[
-                                                                                    {"role": "system", "content": "You are a great sementic similarity checker. You can check for semantic similarities and return without hillucinating. Do not return None. There will always be a word similar to presented description"},
-                                                                                    {"role": "user", "content": f"out of the following list of description:\n{list(df_char.description)}\nwhich one description matches '{desc}'. Strictly return only the one word that matches the most. Only and only the word that matches. Do not return None. There will always be a word similar to presented description"}
-                                                                                    ], 
-                                                                                    temperature = 0.6)
-                    
-                    print(f"Similar to {desc} is {str(similarity_discriptions['choices'][0]['message']['content'])}")
-                    if str(similarity_discriptions['choices'][0]['message']['content']) == 'None':
-                        NO_OF_EXCEPTIONS += 1
-                        if NO_OF_EXCEPTIONS >= 5:
-                            done = True
-                        continue
-                    selected_image = df_char.loc[df_char['description'] == str(similarity_discriptions['choices'][0]['message']['content']), 'filename'].values[0]
-                    input_cost.append(similarity_discriptions["usage"]["prompt_tokens"])
-                    output_cost.append(similarity_discriptions["usage"]["completion_tokens"])
-                    
-                    if selected_image:
-                        #image_path = os.path.join(os.path.dirname(folder_char), selected_image)
-                        image_path = f"{folder_char}/{selected_image}"
-                        images[tile] = Image.open(image_path).convert("RGBA")
-                    done=True
-            except Exception as e:
-                #print(f"check#3 done = {done}")
-                tb = traceback.format_exc()
-                print(f"Exception raised: {e}\n {tb}")
-                NO_OF_EXCEPTIONS += 1
-                if NO_OF_EXCEPTIONS >= 5:
-                    done = True
-                pass
-        else:
-            # Compare each description with the descriptions in the CSV
-            NO_OF_EXCEPTIONS = 0
-            done = False
-            try:
-                while not done:   
-                    similarity_discriptions = openai_function(model="gpt-4-0613", messages=[
-                                                                                    {"role": "system", "content": "You are a great sementic similarity checker. You can check for semantic similarities and return without hillucinating. Do not return None. There will always be a word similar to presented description"},
-                                                                                    {"role": "user", "content": f"out of the following list of description:\n{list(df.description)}\nwhich one description matches '{desc}'. Strictly return only the one word that matches the most. Only and only the word that matches. Do not return None. There will always be a word similar to presented description"}
-                                                                                    ], 
-                                                                                    temperature = 0.6)
-                    
-                    
-                    print(f"Similar to {desc} is {str(similarity_discriptions['choices'][0]['message']['content'])}")
-                    if str(similarity_discriptions['choices'][0]['message']['content']) == 'None':
-                        NO_OF_EXCEPTIONS += 1
-                        if NO_OF_EXCEPTIONS >= 5:
-                            done = True
-                        continue
-                    selected_image = df.loc[df['description'] == str(similarity_discriptions['choices'][0]['message']['content']), 'filename'].values[0]
-                    input_cost.append(similarity_discriptions["usage"]["prompt_tokens"])
-                    output_cost.append(similarity_discriptions["usage"]["completion_tokens"])
-                    
-                        
-                    # Load the image and store it along with the similarity score
-                    if selected_image:
-                        #image_path = os.path.join(os.path.dirname(folder), selected_image)
-                        image_path = f"{folder}/{selected_image}"
-                        images[tile] = Image.open(image_path).convert("RGBA")
-                    done=True
-
-            except Exception as e:
-                #print(f"check#3 done = {done}")
-                tb = traceback.format_exc()
-                print(f"Exception raised: {e}\n {tb}")
-                NO_OF_EXCEPTIONS += 1
-                if NO_OF_EXCEPTIONS >= 5:
-                    done = True
-                pass
-
-    return images, sum(input_cost), sum(output_cost)
 
 def scale_string(s, scale_factor):
     scaled_lines = []
