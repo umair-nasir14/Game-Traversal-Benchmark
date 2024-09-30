@@ -157,8 +157,18 @@ def benchmark(model,
                         while not action_done:
                             try:
                                 if "gpt" in model:
-                                    actions_discriptions = client.chat.completions.create(model=model, messages=[
+                                    actions_discriptions = openai.ChatCompletion.create(model=model, messages=[
                                                                                                             {"role": "system", "content": action_system},
+                                                                                                            {"role": "user", "content": action_prompt}
+                                                                                                            ])
+                                    
+                        
+                                    out_resp = actions_discriptions['choices'][0]['message']['content']
+                                    print(f"response from model: {out_resp}")
+                                    action_dict = extract_dict(out_resp)
+
+                                if "o1" in model:
+                                    actions_discriptions = openai.ChatCompletion.create(model=model, messages=[
                                                                                                             {"role": "user", "content": action_prompt}
                                                                                                             ])
                                     
@@ -195,14 +205,6 @@ def benchmark(model,
 
                                     # The language model which will generate the completion.
                                     model=model,
-
-                                    #
-                                    # Optional parameters
-                                    #
-
-                                    # Controls randomness: lowering results in less random completions.
-                                    # As the temperature approaches zero, the model will become deterministic
-                                    # and repetitive.
                                     temperature=1.0,
 
                                     # The maximum number of tokens to generate. Requests can use up to
@@ -446,10 +448,11 @@ def benchmark(model,
 
 def run(model: str, total_episodes: int = 1, experiment_name: str = "exp_001", save_dir: str = "./outputs/"):
 
-    if "gpt" in model:
+    if "gpt" or "o1" in model:
 
-        from openai import OpenAI
-        client = OpenAI(os.getenv("OPENAI_API_KEY"))
+        import openai
+        openai.api_key = "sk-proj-cSFKrhOMebpoNXmV2N80T3BlbkFJqWJnJOVPiPUx6QwAKteF"#os.getenv("OPENAI_API_KEY")
+        client = ""
 
     elif "claude" in model:
 
@@ -465,7 +468,7 @@ def run(model: str, total_episodes: int = 1, experiment_name: str = "exp_001", s
         from groq import Groq
 
         client = Groq(
-            api_key="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",
+            api_key=os.environ.get("GROQ_API_KEY")
         )
 
 
@@ -475,7 +478,9 @@ def run(model: str, total_episodes: int = 1, experiment_name: str = "exp_001", s
 
     bench_data = get_data()
 
-    for i, data in enumerate(bench_data[:1]):
+    result_file_name = f"{model}_{experiment_name}"
+
+    for i, data in enumerate(bench_data[2:]):
         try:
             print(f"EVALUATING ROW {i}")
             print(f"WITH EXPERIMENT ID {data['experiment_id']}")
@@ -517,10 +522,13 @@ def run(model: str, total_episodes: int = 1, experiment_name: str = "exp_001", s
             print(f"RESULT FOR EXPERIMENT ID {data['experiment_id']}:")
             for key, val in model_results.items():
                 print(f"{key} : {val}")
-            exp = "003"    
-            save_data(benchmark_data=model_results,file_name=f"{model}_{experiment_name}",save_dir=save_dir,save_json=True)
-                
+                    
+            
+            save_data(benchmark_data=model_results,file_name=result_file_name,save_dir=save_dir,save_json=True)
+            
             
         except Exception as e:
             tb = traceback.format_exc()
             print(f"Exception raised: {e}\n {tb}")
+    
+    return result_file_name

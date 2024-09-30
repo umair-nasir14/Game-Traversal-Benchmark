@@ -14,13 +14,13 @@ def logcosh(x):
 def compile_results(model: str, experiment_name: str):
     #file_name = "benchmark_results_final"
     file_name = f"RESULTS_{experiment_name}"
-    res_dir = f"/outputs/"
+    res_dir = "outputs"
     
     if "/" in model:
         model = extract_slash(model)
     else:
         model = model
-    with open(f'{res_dir}/{model}_results_{experiment_name}.json', 'r') as file:
+    with open(f'{res_dir}/{experiment_name}.json', 'r') as file:
         model_results = json.load(file)
     with open('data/traversal_benchmark.json', 'r') as file:
         bench_results = json.load(file)

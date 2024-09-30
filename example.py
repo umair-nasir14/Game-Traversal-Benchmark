@@ -1,5 +1,6 @@
-from gtb.replicate import run 
+from gtb.gtbench import run 
 from gtb.evaluations import compile_results
 
-run("llama3-8b-8192")
-compile_results("llama3-8b-8192", "exp_001")
+model_name = "o1-preview-2024-09-12"
+experiment_name = run(model_name)
+compile_results(model_name, experiment_name)

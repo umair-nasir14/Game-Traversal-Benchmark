@@ -2,7 +2,7 @@ import json
 import pandas as pd
 import os
 
-from utils import extract_slash
+from .utils import extract_slash
 
 
 def get_data():
