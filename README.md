@@ -48,13 +48,12 @@ GROQ_API_KEY= ...
 and install relevent library, such as `pip install openai`
 
 ```
-from gtb.replicate import run
+from gtb.gtbench import run 
 from gtb.evaluations import compile_results
 
-model = "gpt-4-turbo-2024-04-09"
-experiment_name = "replicate_001"
-run(model = model, experiment_name = experiment_name)
-compile_results(model = model, experiment_name = experiment_name)
+model_name = "o1-preview-2024-09-12"
+experiment_name = run(model_name)
+compile_results(model_name, experiment_name)
 ```
 
 This will give you a model specific result file with the name as `{model}_{experiment_name}.json` that will contain results for each row of data. There will be another file that will have all results combined to have `GTB_Score` and other scores. 
@@ -62,6 +61,8 @@ This will give you a model specific result file with the name as `{model}_{exper
 Models tested in the paper:
 
 ```
+ "o1-preview-2024-09-12"
+ "o1-mini-2024-09-12"
  "gpt-3.5-turbo-0125"
  "gpt-4-0613"
  "gpt-4-turbo-2024-04-09"
@@ -79,6 +80,8 @@ Models tested in the paper:
 
 | **Model**               | **GTBS(&uarr;)** | **MGE(&darr;)** | **MPL(&darr;)** | **MAT(&darr;)** | **Top-0 Acc.(&uarr;)** | **Top-1 Acc.(&uarr;)** | **Top-5 Acc.(&uarr;)** |
 |-------------------------|--------------------|---------------------|---------------------|---------------------|--------------------------|--------------------------|--------------------------|
+| **O1**                  | $67.84$   | $0.12$     | $51.35$    | $51.73$    | $50$            | $10.76$         | $13.19$         |
+| **O1-mini**                  | $61.36$   | $0.83$     | $82.83$    | $82.95$    | $46.98$            | $6.70$         | $14.38$         |
 | **GPT-4-Turbo**         | $44.97 \pm 0.22$   | $0.03 \pm 0.01$     | $80.91 \pm 0.69$    | $80.97 \pm 0.62$    | $19.2\pm0.24$            | $17.66 \pm 0.46$         | $23.05 \pm 1.03$         |
 | **GPT-4-o**             | $30.95 \pm 0.76$   | $0.53 \pm 0.06$     | $85.42 \pm 0.58$    | $85.91 \pm 0.61$    | $7.84 \pm 0.17$          | $11.34 \pm 0.36$         | $18.99 \pm 0.45$         |
 | **Claude-3-Opus**       | $28.65 \pm 0.59$   | $0.02 \pm 0.01$     | $100.41 \pm 0.37$   | $100.44 \pm 0.36$   | $5.49 \pm 0.65$          | $12.35 \pm 0.43$         | $22.72 \pm 0.09$         |
