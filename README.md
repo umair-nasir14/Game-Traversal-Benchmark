@@ -1,6 +1,6 @@
 # Game-Traversal-Benchmark
 
-This repository contains the _Game-Traversal-Benchmark (GTB)_, which is explained in the paper "add paper link".
+This repository contains the _GameTraversalBenchmark (GTB)_, which is explained in the paper [GameTraversalBenchmark: Evaluating Planning Abilities Of Large Language Models Through Traversing 2D Game Maps](https://arxiv.org/abs/2410.07765).
 
 
 ### Usage
