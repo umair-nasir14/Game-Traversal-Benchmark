@@ -99,5 +99,10 @@ Models tested in the paper:
 ### Cite:
 
 ```
-Citation
+@article{nasir2024gametraversalbenchmark,
+  title={GameTraversalBenchmark: Evaluating Planning Abilities Of Large Language Models Through Traversing 2D Game Maps},
+  author={Nasir, Muhammad Umair and James, Steven and Togelius, Julian},
+  journal={arXiv preprint arXiv:2410.07765},
+  year={2024}
+}
 ```
